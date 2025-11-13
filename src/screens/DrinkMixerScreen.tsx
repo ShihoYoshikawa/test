@@ -31,6 +31,9 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   const [isGlassModalOpen, setIsGlassModalOpen] = useState(false);
   const [isTechniqueModalOpen, setIsTechniqueModalOpen] = useState(false);
   const [shakeElement, setShakeElement] = useState<string | null>(null);
+  // Pending selections to apply after modal closes
+  const [pendingGlass, setPendingGlass] = useState<Glass | undefined>();
+  const [pendingTechnique, setPendingTechnique] = useState<Technique | undefined>();
 
   const handleMaterialSelect = (material: Material, quantity: Quantity) => {
     const existingIndex = selectedMaterials.findIndex(sm => sm.material.id === material.id);
@@ -55,6 +58,8 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
     setSelectedMaterials([]);
     setSelectedGlass(undefined);
     setSelectedTechnique(undefined);
+    setPendingGlass(undefined);
+    setPendingTechnique(undefined);
   };
 
   const handleServe = () => {
@@ -177,13 +182,21 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isGlassModalOpen}
         onClose={() => setIsGlassModalOpen(false)}
         title="グラスを選択"
+        onExitComplete={() => {
+          // Apply pending selection after modal closes
+          if (pendingGlass) {
+            setSelectedGlass(pendingGlass);
+            setPendingGlass(undefined);
+          }
+        }}
       >
         <div className="grid grid-cols-2 gap-3">
           {glasses.map((glass) => (
             <button
               key={glass.id}
               onClick={() => {
-                setSelectedGlass(glass);
+                // Store selection in pending state and close modal
+                setPendingGlass(glass);
                 setIsGlassModalOpen(false);
               }}
               className={`
@@ -204,13 +217,21 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isTechniqueModalOpen}
         onClose={() => setIsTechniqueModalOpen(false)}
         title="技法を選択"
+        onExitComplete={() => {
+          // Apply pending selection after modal closes
+          if (pendingTechnique) {
+            setSelectedTechnique(pendingTechnique);
+            setPendingTechnique(undefined);
+          }
+        }}
       >
         <div className="space-y-3">
           {techniques.map((technique) => (
             <button
               key={technique.id}
               onClick={() => {
-                setSelectedTechnique(technique);
+                // Store selection in pending state and close modal
+                setPendingTechnique(technique);
                 setIsTechniqueModalOpen(false);
               }}
               className={`

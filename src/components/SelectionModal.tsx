@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 interface SelectionModalProps {
   isOpen: boolean;
@@ -10,10 +11,28 @@ interface SelectionModalProps {
 }
 
 export function SelectionModal({ isOpen, onClose, title, children, onExitComplete }: SelectionModalProps) {
+  // Snapshot of children to prevent re-renders during exit animation
+  const childrenSnapshot = useRef<React.ReactNode>(null);
+  const isFirstOpen = useRef(true);
+
+  // Capture children when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      childrenSnapshot.current = children;
+      isFirstOpen.current = false;
+    }
+  }, [isOpen, children]);
+
+  const handleExitComplete = () => {
+    // Clear snapshot after animation completes
+    childrenSnapshot.current = null;
+    onExitComplete?.();
+  };
+
   return (
     <AnimatePresence
       mode="wait"
-      onExitComplete={onExitComplete}
+      onExitComplete={handleExitComplete}
     >
       {isOpen && (
         <div key={`modal-${title}`}>
@@ -45,7 +64,7 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
                 </button>
               </div>
               <div className="overflow-y-auto max-h-[60vh]">
-                {children}
+                {childrenSnapshot.current || children}
               </div>
             </div>
           </motion.div>
