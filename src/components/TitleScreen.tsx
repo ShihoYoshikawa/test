@@ -2,6 +2,7 @@ import { Settings } from 'lucide-react';
 import { Button } from './ui/button';
 import { useTransition } from '../contexts/TransitionContext';
 import { useState } from 'react';
+import { NeonParticles } from './NeonParticles';
 
 interface TitleScreenProps {
   onStart: () => void;
@@ -28,6 +29,9 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`
         }}
       />
+
+      {/* Neon Particles */}
+      <NeonParticles />
 
       {/* Settings Button - Top Right */}
       <div className="absolute top-6 right-6 z-50">
@@ -110,6 +114,7 @@ export function TitleScreen({ onStart }: TitleScreenProps) {
               text-white text-2xl font-semibold
               transition-all duration-300
               active:scale-95
+              glow-pulse-strong
             "
             style={{
               boxShadow: `

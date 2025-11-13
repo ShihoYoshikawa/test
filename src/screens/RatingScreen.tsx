@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SpecialIngredient } from '../types';
 import { specialIngredients } from '../data/specialIngredients';
+import { NeonParticles } from '../components/NeonParticles';
 
 interface RatingScreenProps {
   onConfirm: (selectedIngredient: SpecialIngredient) => void;
@@ -95,6 +96,9 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
 
       {/* Dark Overlay */}
       <div className="fixed inset-0 bg-gradient-to-b from-black/70 via-gray-900/60 to-black/70" />
+
+      {/* Neon Particles */}
+      <NeonParticles />
 
       {/* Back Button */}
       <button
@@ -303,7 +307,7 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
               font-semibold text-base md:text-lg tracking-wide
               transition-all duration-300
               ${selectedIngredientId
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:scale-105'
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:scale-105 glow-pulse-soft'
                 : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
               }
             `}

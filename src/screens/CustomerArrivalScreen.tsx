@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { TonightInfo } from '../components/TonightInfo';
 import { CustomerCard } from '../components/CustomerCard';
+import { NeonParticles } from '../components/NeonParticles';
 
 interface Customer {
   id: number;
@@ -88,6 +89,9 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
         }}
       />
+
+      {/* Neon Particles */}
+      <NeonParticles />
 
       {/* Back Button */}
       <button
@@ -264,7 +268,7 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
                 transition-all duration-300
                 ${
                   selectedCustomerId !== null
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 active:scale-95'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 active:scale-95 glow-pulse-soft'
                     : 'bg-gray-500/30 cursor-not-allowed'
                 }
               `}

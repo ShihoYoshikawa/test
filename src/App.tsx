@@ -37,6 +37,11 @@ export default function App() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
+      {/* Scanline Overlay - CRT Monitor Effect */}
+      <div className="scanline-overlay">
+        <div className="scanline" />
+      </div>
+
       <ScreenTransition screenKey={currentScreen}>
         {currentScreen === 'title' ? (
           <TitleScreen onStart={handleStart} />
