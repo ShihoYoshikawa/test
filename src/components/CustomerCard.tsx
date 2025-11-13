@@ -26,7 +26,7 @@ export function CustomerCard({
       onClick={onClick}
       className={`
         relative
-        w-full md:w-[420px] h-[520px] md:h-[540px]
+        w-full md:w-[420px] h-[480px] md:h-[540px]
         rounded-[20px]
         backdrop-blur-[12px]
         cursor-pointer

@@ -73,17 +73,17 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat relative overflow-hidden"
+      className="h-screen bg-cover bg-center bg-no-repeat relative overflow-y-auto"
       style={{
         backgroundImage: `url(https://images.unsplash.com/photo-1637368783271-179aa5e1a4f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZW9uJTIwY2l0eSUyMG5pZ2h0JTIwYm9rZWh8ZW58MXx8fHwxNzYzMDIwOTMwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral)`,
       }}
     >
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-gray-900/55 to-black/60" />
+      <div className="fixed inset-0 bg-gradient-to-b from-black/60 via-gray-900/55 to-black/60 pointer-events-none" />
 
       {/* Film Grain Texture */}
       <div
-        className="absolute inset-0 opacity-[0.015] pointer-events-none"
+        className="fixed inset-0 opacity-[0.015] pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
         }}
@@ -92,15 +92,15 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
       {/* Back Button */}
       <button
         onClick={onBack}
-        className="absolute top-6 left-6 z-50 glassmorphism hover:bg-white/10 transition-all rounded-full p-2"
+        className="fixed top-4 left-4 md:top-6 md:left-6 z-50 glassmorphism hover:bg-white/10 transition-all rounded-full p-2"
       >
         <ChevronLeft className="w-6 h-6 text-cyan-400" />
       </button>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center px-4 py-8 md:py-12">
+      <div className="relative z-10 min-h-screen flex flex-col items-center px-4 py-16 md:py-12 pb-24">
         {/* Tonight Info */}
-        <div className="w-full max-w-4xl mb-8">
+        <div className="w-full max-w-4xl mb-4 md:mb-8">
           <TonightInfo mood="rainy" description="雨の夜、落ち着いた客が多い" />
         </div>
 
@@ -112,7 +112,7 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.6 }}
-              className="w-full max-w-md h-[260px] mb-8 flex items-center justify-center"
+              className="w-full max-w-md h-[180px] md:h-[260px] mb-4 md:mb-8 flex items-center justify-center"
             >
               <div
                 className="w-32 h-32 rounded-full"
@@ -148,7 +148,7 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
             </div>
 
             {/* Mobile Layout (< 768px) - Swipeable Carousel */}
-            <div className="md:hidden w-full max-w-[360px] mb-8 relative">
+            <div className="md:hidden w-full max-w-[360px] mb-6 relative">
               {/* Left Arrow */}
               <button
                 onClick={handlePrev}
@@ -244,8 +244,8 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
               onClick={onCustomerSelected}
               disabled={selectedCustomerId === null}
               className={`
-                w-full max-w-[300px] h-[60px] rounded-xl
-                text-white text-xl font-semibold
+                w-full max-w-[300px] h-[52px] md:h-[60px] rounded-xl
+                text-white text-lg md:text-xl font-semibold
                 transition-all duration-300
                 ${
                   selectedCustomerId !== null

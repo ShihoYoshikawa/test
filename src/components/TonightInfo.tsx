@@ -8,7 +8,7 @@ interface TonightInfoProps {
 export function TonightInfo({ mood, description }: TonightInfoProps) {
   return (
     <div
-      className="w-full h-[160px] rounded-2xl p-6 flex flex-col justify-center items-center gap-3"
+      className="w-full h-[120px] md:h-[160px] rounded-2xl p-4 md:p-6 flex flex-col justify-center items-center gap-2 md:gap-3"
       style={{
         background: 'rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(16px)',
