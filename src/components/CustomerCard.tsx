@@ -1,4 +1,6 @@
 import { Star } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ParticleBurst } from './ParticleBurst';
 
 interface CustomerCardProps {
   imagePath: string;
@@ -21,10 +23,37 @@ export function CustomerCard({
   isSelected,
   onClick,
 }: CustomerCardProps) {
+  const [showBurst, setShowBurst] = useState(false);
+  const [burstPos, setBurstPos] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const wasSelected = useRef(isSelected);
+
+  useEffect(() => {
+    // Trigger particle burst when card becomes selected
+    if (isSelected && !wasSelected.current && cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setBurstPos({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      });
+      setShowBurst(true);
+    }
+    wasSelected.current = isSelected;
+  }, [isSelected]);
+
   return (
-    <div
-      onClick={onClick}
-      className={`
+    <>
+      {showBurst && (
+        <ParticleBurst
+          x={burstPos.x}
+          y={burstPos.y}
+          onComplete={() => setShowBurst(false)}
+        />
+      )}
+      <div
+        ref={cardRef}
+        onClick={onClick}
+        className={`
         relative
         w-full md:w-[420px] h-[480px] md:h-[540px]
         rounded-[20px]
@@ -33,7 +62,7 @@ export function CustomerCard({
         transition-all duration-300
         ${
           isSelected
-            ? 'scale-105 border-2 border-cyan-400'
+            ? 'scale-105 border-2 border-cyan-400 scale-pop'
             : 'border border-white/20'
         }
       `}
@@ -68,6 +97,7 @@ export function CustomerCard({
             src={imagePath}
             alt="Customer"
             className="w-full h-full object-cover"
+            loading="eager"
           />
         </div>
 
@@ -141,5 +171,6 @@ export function CustomerCard({
         </div>
       </div>
     </div>
+    </>
   );
 }

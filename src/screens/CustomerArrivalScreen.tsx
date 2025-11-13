@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { TonightInfo } from '../components/TonightInfo';
 import { CustomerCard } from '../components/CustomerCard';
+import { NeonParticles } from '../components/NeonParticles';
 
 interface Customer {
   id: number;
@@ -89,6 +90,9 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
         }}
       />
 
+      {/* Neon Particles */}
+      <NeonParticles />
+
       {/* Back Button */}
       <button
         onClick={onBack}
@@ -104,34 +108,41 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
           <TonightInfo mood="rainy" description="雨の夜、落ち着いた客が多い" />
         </div>
 
-        {/* Entrance Animation Area */}
-        <AnimatePresence>
-          {showEntranceAnimation && (
+        {/* Customer Cards Container - Reserve space to prevent layout shift */}
+        <div className="w-full flex flex-col items-center">
+
+          {/* Entrance Animation Overlay */}
+          <AnimatePresence>
+            {showEntranceAnimation && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute z-20 inset-0 flex items-center justify-center"
+                style={{ pointerEvents: 'none' }}
+              >
+                <div
+                  className="w-32 h-32 rounded-full"
+                  style={{
+                    background: 'rgba(76, 199, 255, 0.2)',
+                    boxShadow: '0 0 40px rgba(76, 199, 255, 0.4)',
+                    backdropFilter: 'blur(20px)',
+                  }}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Customer Cards - Always rendered to prevent layout shift */}
+          <>
+            {/* Desktop Layout (>= 768px) */}
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="w-full max-w-md h-[180px] md:h-[260px] mb-4 md:mb-8 flex items-center justify-center"
+              animate={{ opacity: showEntranceAnimation ? 0 : 1 }}
+              transition={{ duration: 0.3, delay: showEntranceAnimation ? 0 : 0.3 }}
+              className="hidden md:flex gap-8 mb-12 justify-center"
             >
-              <div
-                className="w-32 h-32 rounded-full"
-                style={{
-                  background: 'rgba(76, 199, 255, 0.2)',
-                  boxShadow: '0 0 40px rgba(76, 199, 255, 0.4)',
-                  backdropFilter: 'blur(20px)',
-                }}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {!showEntranceAnimation && (
-          <>
-            {/* Customer Cards - Desktop: 2 cards side by side, Mobile: 1 card with swipe */}
-
-            {/* Desktop Layout (>= 768px) */}
-            <div className="hidden md:flex gap-8 mb-12 justify-center">
               {customers.map((customer) => (
                 <CustomerCard
                   key={customer.id}
@@ -145,10 +156,15 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
                   onClick={() => setSelectedCustomerId(customer.id)}
                 />
               ))}
-            </div>
+            </motion.div>
 
             {/* Mobile Layout (< 768px) - Swipeable Carousel */}
-            <div className="md:hidden w-full max-w-[360px] mb-6 relative">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: showEntranceAnimation ? 0 : 1 }}
+              transition={{ duration: 0.3, delay: showEntranceAnimation ? 0 : 0.3 }}
+              className="md:hidden w-full max-w-[360px] mb-6 relative"
+            >
               {/* Left Arrow */}
               <button
                 onClick={handlePrev}
@@ -237,10 +253,13 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
                   />
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* CTA Button */}
-            <button
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: showEntranceAnimation ? 0 : 1 }}
+              transition={{ duration: 0.3, delay: showEntranceAnimation ? 0 : 0.3 }}
               onClick={onCustomerSelected}
               disabled={selectedCustomerId === null}
               className={`
@@ -249,7 +268,7 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
                 transition-all duration-300
                 ${
                   selectedCustomerId !== null
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 active:scale-95'
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 active:scale-95 glow-pulse-soft'
                     : 'bg-gray-500/30 cursor-not-allowed'
                 }
               `}
@@ -261,9 +280,9 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
               }}
             >
               この客にする
-            </button>
+            </motion.button>
           </>
-        )}
+        </div>
       </div>
     </div>
   );

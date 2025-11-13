@@ -36,3 +36,25 @@ export interface Technique {
   description: string;
   icon: string;
 }
+
+export type RatingLevel = 'excellent' | 'good' | 'bad';
+
+export interface RatingCategory {
+  label: string;
+  score: string;
+}
+
+export interface Rating {
+  level: RatingLevel;
+  flavor: string;
+  presentation: string;
+  mood: string;
+}
+
+export interface SpecialIngredient {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  effect: string;
+}

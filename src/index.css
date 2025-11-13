@@ -2037,3 +2037,285 @@
   syntax: "*";
   inherits: false
 }
+
+/* ========================================
+   Custom Neon & Cyberpunk Effects
+   ======================================== */
+
+/* Glow Pulse Animation - Breathing effect for buttons */
+@keyframes glow-pulse-strong {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(76, 199, 255, 0.5),
+      0 0 30px rgba(76, 199, 255, 0.3),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 35px rgba(76, 199, 255, 0.8),
+      0 0 60px rgba(76, 199, 255, 0.5),
+      inset 0 0 25px rgba(255, 255, 255, 0.15);
+  }
+}
+
+@keyframes glow-pulse-soft {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(76, 199, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(76, 199, 255, 0.7);
+  }
+}
+
+.glow-pulse-strong {
+  animation: glow-pulse-strong 2.5s ease-in-out infinite;
+}
+
+.glow-pulse-soft {
+  animation: glow-pulse-soft 2s ease-in-out infinite;
+}
+
+/* Scanline Effect - CRT Monitor style */
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.scanline-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.scanline {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    transparent 0%,
+    rgba(0, 255, 255, 0.03) 49.9%,
+    transparent 50%,
+    rgba(0, 255, 255, 0.03) 50.1%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: scan 8s linear infinite;
+  opacity: 0.5;
+}
+
+/* Optional: CRT Flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 0.98; }
+  50% { opacity: 1; }
+}
+
+.crt-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+/* Respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glow-pulse-strong,
+  .glow-pulse-soft,
+  .scanline {
+    animation: none !important;
+  }
+}
+
+/* ========================================
+   Phase 2: Advanced Cyberpunk Effects
+   ======================================== */
+
+/* Glitch Effect - Screen Transitions */
+@keyframes glitch {
+  0% {
+    clip-path: inset(40% 0 61% 0);
+    transform: translate(0);
+  }
+  20% {
+    clip-path: inset(92% 0 1% 0);
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    clip-path: inset(43% 0 1% 0);
+    transform: translate(2px, -2px);
+  }
+  60% {
+    clip-path: inset(25% 0 58% 0);
+    transform: translate(-2px, 0);
+  }
+  80% {
+    clip-path: inset(54% 0 7% 0);
+    transform: translate(2px, 2px);
+  }
+  100% {
+    clip-path: inset(58% 0 43% 0);
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-text {
+  0% {
+    text-shadow: 
+      2px 0 0 rgba(255, 0, 0, 0.7),
+      -2px 0 0 rgba(0, 255, 255, 0.7);
+  }
+  25% {
+    text-shadow: 
+      -2px 0 0 rgba(255, 0, 0, 0.7),
+      2px 0 0 rgba(0, 255, 255, 0.7);
+  }
+  50% {
+    text-shadow: 
+      2px -2px 0 rgba(255, 0, 0, 0.7),
+      -2px 2px 0 rgba(0, 255, 255, 0.7);
+  }
+  75% {
+    text-shadow: 
+      -2px -2px 0 rgba(255, 0, 0, 0.7),
+      2px 2px 0 rgba(0, 255, 255, 0.7);
+  }
+  100% {
+    text-shadow: 
+      0 0 0 rgba(255, 0, 0, 0.7),
+      0 0 0 rgba(0, 255, 255, 0.7);
+  }
+}
+
+.glitch-effect {
+  position: relative;
+  animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.glitch-text {
+  animation: glitch-text 0.2s ease-in-out;
+}
+
+/* RGB Split Effect */
+@keyframes rgb-split {
+  0% {
+    filter: none;
+  }
+  33% {
+    filter: drop-shadow(2px 0 0 rgba(255, 0, 0, 0.5)) drop-shadow(-2px 0 0 rgba(0, 255, 255, 0.5));
+  }
+  66% {
+    filter: drop-shadow(-2px 0 0 rgba(255, 0, 0, 0.5)) drop-shadow(2px 0 0 rgba(0, 255, 255, 0.5));
+  }
+  100% {
+    filter: none;
+  }
+}
+
+.rgb-split {
+  animation: rgb-split 0.2s ease-in-out;
+}
+
+/* Typing Animation */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: rgba(76, 199, 255, 0.8);
+  }
+}
+
+.typing-animation {
+  overflow: hidden;
+  border-right: 0.15em solid rgba(76, 199, 255, 0.8);
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: 0.15em;
+  animation: 
+    typing 1.5s steps(20, end),
+    blink-caret 0.75s step-end infinite;
+}
+
+/* Character reveal animation for stagger effect */
+@keyframes char-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.char-reveal {
+  display: inline-block;
+  opacity: 0;
+  animation: char-reveal 0.3s ease-out forwards;
+}
+
+/* Particle Burst Effect */
+@keyframes particle-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+.particle-burst {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 199, 255, 1), rgba(76, 199, 255, 0));
+  pointer-events: none;
+  animation: particle-burst 0.8s ease-out forwards;
+}
+
+/* Scale pop effect for cards */
+@keyframes scale-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scale-pop {
+  animation: scale-pop 0.3s ease-out;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glitch-effect,
+  .glitch-text,
+  .rgb-split,
+  .typing-animation,
+  .char-reveal,
+  .particle-burst,
+  .scale-pop {
+    animation: none !important;
+  }
+}

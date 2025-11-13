@@ -6,25 +6,32 @@ interface SelectionModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  onExitComplete?: () => void;
 }
 
-export function SelectionModal({ isOpen, onClose, title, children }: SelectionModalProps) {
+export function SelectionModal({ isOpen, onClose, title, children, onExitComplete }: SelectionModalProps) {
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      mode="wait"
+      onExitComplete={onExitComplete}
+    >
       {isOpen && (
-        <>
+        <div key={`modal-${title}`}>
           <motion.div
+            key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
           />
           <motion.div
+            key="content"
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh] slide-up"
           >
             <div className="glassmorphism-strong rounded-t-3xl p-6 border-t-2 border-x-2 border-white/20">
@@ -42,7 +49,7 @@ export function SelectionModal({ isOpen, onClose, title, children }: SelectionMo
               </div>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );

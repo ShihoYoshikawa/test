@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SelectedMaterial, Material, Glass, Technique, Quantity } from '../types';
 import { materials, glasses, techniques } from '../data/materials';
 import { MaterialCard } from '../components/MaterialCard';
@@ -7,16 +7,15 @@ import { SelectionModal } from '../components/SelectionModal';
 import { Button } from '../components/ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { ArrowLeft, RotateCcw, ArrowRight } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import { Toaster } from '../components/ui/sonner';
 
 const MAX_MATERIALS = 4;
 
 interface DrinkMixerScreenProps {
   onBack?: () => void;
+  onServeComplete?: () => void;
 }
 
-export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
+export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenProps) {
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([]);
   const [materialStocks, setMaterialStocks] = useState<Record<string, number>>(() => {
     const stocks: Record<string, number> = {};
@@ -45,7 +44,6 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
       // Add new material
       if (selectedMaterials.length >= MAX_MATERIALS) {
         setShakeElement('current-display');
-        toast.error('材料は最大4種類までです');
         setTimeout(() => setShakeElement(null), 300);
         return;
       }
@@ -57,12 +55,10 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
     setSelectedMaterials([]);
     setSelectedGlass(undefined);
     setSelectedTechnique(undefined);
-    toast.success('リセットしました');
   };
 
   const handleServe = () => {
     if (selectedMaterials.length === 0) {
-      toast.error('材料を選択してください');
       return;
     }
 
@@ -75,15 +71,14 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
     });
     setMaterialStocks(newStocks);
 
-    toast.success('🍹 カクテルを作成しました！', {
-      description: 'お客様に提供しました'
-    });
-
-    // Reset after serving
+    // Navigate to rating screen after a short delay
     setTimeout(() => {
       setSelectedMaterials([]);
       setSelectedGlass(undefined);
       setSelectedTechnique(undefined);
+      setIsGlassModalOpen(false);
+      setIsTechniqueModalOpen(false);
+      onServeComplete?.();
     }, 1500);
   };
 
@@ -190,7 +185,6 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
               onClick={() => {
                 setSelectedGlass(glass);
                 setIsGlassModalOpen(false);
-                toast.success(`${glass.name}を選択しました`);
               }}
               className={`
                 p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all
@@ -218,7 +212,6 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
               onClick={() => {
                 setSelectedTechnique(technique);
                 setIsTechniqueModalOpen(false);
-                toast.success(`${technique.name}を選択しました`);
               }}
               className={`
                 w-full p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all text-left
@@ -236,8 +229,6 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
           ))}
         </div>
       </SelectionModal>
-
-      <Toaster position="top-center" />
     </div>
   );
 }
