@@ -1,19 +1,28 @@
 import { useState } from 'react';
 import { TitleScreen } from './components/TitleScreen';
+import { CustomerArrivalScreen } from './screens/CustomerArrivalScreen';
 import { DrinkMixerScreen } from './screens/DrinkMixerScreen';
 import { ScreenTransition } from './components/ScreenTransition';
 
-type Screen = 'title' | 'mixer';
+type Screen = 'title' | 'customerArrival' | 'mixer';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('title');
 
   const handleStart = () => {
+    setCurrentScreen('customerArrival');
+  };
+
+  const handleCustomerSelected = () => {
     setCurrentScreen('mixer');
   };
 
-  const handleBack = () => {
+  const handleBackToTitle = () => {
     setCurrentScreen('title');
+  };
+
+  const handleBackToCustomerArrival = () => {
+    setCurrentScreen('customerArrival');
   };
 
   return (
@@ -21,8 +30,13 @@ export default function App() {
       <ScreenTransition screenKey={currentScreen}>
         {currentScreen === 'title' ? (
           <TitleScreen onStart={handleStart} />
+        ) : currentScreen === 'customerArrival' ? (
+          <CustomerArrivalScreen
+            onCustomerSelected={handleCustomerSelected}
+            onBack={handleBackToTitle}
+          />
         ) : (
-          <DrinkMixerScreen onBack={handleBack} />
+          <DrinkMixerScreen onBack={handleBackToCustomerArrival} />
         )}
       </ScreenTransition>
     </div>
