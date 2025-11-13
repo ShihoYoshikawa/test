@@ -1,135 +1,94 @@
-import React, { useState } from 'react';
-import { Material, AmountLevel } from '../types';
+import { Material, Quantity } from '../types';
+import { QuantityToggle } from './QuantityToggle';
+import { Badge } from './ui/badge';
+import { motion } from 'framer-motion';
 
 interface MaterialCardProps {
   material: Material;
-  selectedAmount?: AmountLevel;
-  onSelect: (amount: AmountLevel) => void;
+  selectedQuantity?: Quantity;
+  onSelect: (quantity: Quantity) => void;
   disabled?: boolean;
 }
 
-const AMOUNT_LABELS: Record<AmountLevel, string> = {
-  less: '少なめ',
-  normal: '普通',
-  more: '多め',
+const categoryColors = {
+  spirit: 'from-orange-500/20 to-red-500/20',
+  citrus: 'from-yellow-500/20 to-green-500/20',
+  syrup: 'from-pink-500/20 to-purple-500/20',
+  bitter: 'from-gray-500/20 to-slate-500/20',
+  other: 'from-blue-500/20 to-cyan-500/20'
 };
 
-const TAG_LABELS: Record<string, string> = {
-  sweet: '甘い',
-  sour: '酸味',
-  bitter: '苦味',
-  aromatic: '香り',
-  strong: '強い',
-  refreshing: '爽やか',
-};
-
-const CATEGORY_COLORS: Record<string, string> = {
-  spirit: 'neon-border-blue',
-  citrus: 'neon-border-pink',
-  syrup: 'neon-border-purple',
-  bitter: 'border-red-500/60',
-  liqueur: 'neon-border-pink',
-  other: 'border-gray-500/60',
-};
-
-export const MaterialCard: React.FC<MaterialCardProps> = ({
-  material,
-  selectedAmount,
-  onSelect,
-  disabled = false,
-}) => {
-  const [isHovering, setIsHovering] = useState(false);
-
-  const isSelected = selectedAmount !== undefined;
-  const isOutOfStock = material.isSpecial && material.stockCount === 0;
-  const isDisabled = disabled || isOutOfStock;
-
-  const handleAmountClick = (amount: AmountLevel) => {
-    if (isDisabled) return;
-    onSelect(amount);
-  };
+export function MaterialCard({ material, selectedQuantity, onSelect, disabled }: MaterialCardProps) {
+  const isSelected = !!selectedQuantity;
+  const isOutOfStock = material.stock === 0;
 
   return (
-    <div
+    <motion.div
+      layout
+      whileHover={!disabled && !isOutOfStock ? { y: -4 } : {}}
       className={`
-        glassmorphism rounded-2xl p-4 transition-all duration-300
-        ${isSelected ? CATEGORY_COLORS[material.category] : 'border-white/10'}
-        ${isDisabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}
-        ${isHovering && !isDisabled ? 'shadow-lg' : ''}
-        ${isSelected ? 'float-up' : ''}
+        relative p-4 rounded-2xl transition-all duration-300
+        ${isSelected ? 'glassmorphism-strong neon-border-blue' : 'glassmorphism'}
+        ${disabled || isOutOfStock ? 'opacity-40' : 'hover:shadow-xl'}
+        bg-gradient-to-br ${categoryColors[material.category]}
       `}
-      onMouseEnter={() => !isDisabled && setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
     >
-      <div className="flex items-center gap-4">
-        {/* Icon */}
-        <div className="text-4xl w-10 h-10 flex items-center justify-center">
-          {material.icon}
+      {material.isSpecial && (
+        <div className="absolute top-2 right-2">
+          <Badge variant="outline" className="neon-text-pink border-pink-500/50 bg-pink-500/10 text-xs">
+            Special
+          </Badge>
+        </div>
+      )}
+
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 rounded-full glassmorphism flex items-center justify-center text-2xl">
+            {material.icon}
+          </div>
         </div>
 
-        {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Name and Stock */}
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-white font-bold text-base truncate">
-              {material.name}
-            </h3>
-            {material.isSpecial && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-neon-pink/20 text-neon-pink border border-neon-pink/40">
-                Special
-              </span>
-            )}
-            {material.isSpecial && material.stockCount !== undefined && (
-              <span className="text-xs text-gray-400">
-                x{material.stockCount}
-              </span>
-            )}
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-white">{material.name}</h3>
           </div>
 
-          {/* Tags */}
-          <div className="flex gap-1 mb-3 flex-wrap">
-            {material.tags.slice(0, 2).map((tag) => (
-              <span
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {material.tags.map((tag) => (
+              <Badge
                 key={tag}
-                className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300 border border-white/20"
+                variant="secondary"
+                className="text-xs bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
               >
-                {TAG_LABELS[tag]}
-              </span>
+                {tag}
+              </Badge>
             ))}
           </div>
 
-          {/* Amount Selection */}
-          <div className="flex gap-1">
-            {(['less', 'normal', 'more'] as AmountLevel[]).map((amount, index) => (
-              <button
-                key={amount}
-                onClick={() => handleAmountClick(amount)}
-                disabled={isDisabled}
-                className={`
-                  flex-1 py-1.5 text-xs font-medium transition-all duration-200
-                  ${index === 0 ? 'rounded-l-lg' : ''}
-                  ${index === 2 ? 'rounded-r-lg' : ''}
-                  ${
-                    selectedAmount === amount
-                      ? 'bg-neon-blue/30 text-neon-blue border-2 border-neon-blue/60'
-                      : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
-                  }
-                  ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
-                `}
-              >
-                {AMOUNT_LABELS[amount]}
-              </button>
-            ))}
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-xs text-gray-400">
+              {material.stock === 'unlimited' ? (
+                <span className="text-green-400">∞</span>
+              ) : (
+                <span className={material.stock === 0 ? 'text-red-400' : 'text-yellow-400'}>
+                  ×{material.stock}
+                </span>
+              )}
+            </div>
+
+            {!disabled && !isOutOfStock && (
+              <QuantityToggle
+                value={selectedQuantity || '普通'}
+                onChange={onSelect}
+              />
+            )}
+
+            {isOutOfStock && (
+              <span className="text-xs text-red-400">在庫切れ</span>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Out of Stock Overlay */}
-      {isOutOfStock && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-2xl">
-          <span className="text-red-400 font-bold">在庫切れ</span>
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
-};
+}
