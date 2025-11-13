@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SelectedMaterial, Material, Glass, Technique, Quantity } from '../types';
 import { materials, glasses, techniques } from '../data/materials';
 import { MaterialCard } from '../components/MaterialCard';
@@ -33,6 +33,15 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   const [isGlassModalOpen, setIsGlassModalOpen] = useState(false);
   const [isTechniqueModalOpen, setIsTechniqueModalOpen] = useState(false);
   const [shakeElement, setShakeElement] = useState<string | null>(null);
+
+  // Debug: Track modal state changes
+  useEffect(() => {
+    console.log('[DEBUG] Glass Modal State:', isGlassModalOpen);
+  }, [isGlassModalOpen]);
+
+  useEffect(() => {
+    console.log('[DEBUG] Technique Modal State:', isTechniqueModalOpen);
+  }, [isTechniqueModalOpen]);
 
   const handleMaterialSelect = (material: Material, quantity: Quantity) => {
     const existingIndex = selectedMaterials.findIndex(sm => sm.material.id === material.id);
@@ -192,10 +201,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
             <button
               key={glass.id}
               onClick={() => {
+                console.log('[DEBUG] Glass button clicked, closing modal');
                 // Close modal first to start exit animation
                 setIsGlassModalOpen(false);
+                console.log('[DEBUG] Glass modal close requested');
                 // Update state after modal starts closing
                 setTimeout(() => {
+                  console.log('[DEBUG] Setting selected glass:', glass.name);
                   setSelectedGlass(glass);
                   toast.success(`${glass.name}を選択しました`);
                 }, 50);
@@ -224,10 +236,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
             <button
               key={technique.id}
               onClick={() => {
+                console.log('[DEBUG] Technique button clicked, closing modal');
                 // Close modal first to start exit animation
                 setIsTechniqueModalOpen(false);
+                console.log('[DEBUG] Technique modal close requested');
                 // Update state after modal starts closing
                 setTimeout(() => {
+                  console.log('[DEBUG] Setting selected technique:', technique.name);
                   setSelectedTechnique(technique);
                   toast.success(`${technique.name}を選択しました`);
                 }, 50);
