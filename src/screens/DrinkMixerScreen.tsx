@@ -7,8 +7,6 @@ import { SelectionModal } from '../components/SelectionModal';
 import { Button } from '../components/ui/button';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { ArrowLeft, RotateCcw, ArrowRight } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
-import { Toaster } from '../components/ui/sonner';
 
 const MAX_MATERIALS = 4;
 
@@ -33,17 +31,6 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   const [isGlassModalOpen, setIsGlassModalOpen] = useState(false);
   const [isTechniqueModalOpen, setIsTechniqueModalOpen] = useState(false);
   const [shakeElement, setShakeElement] = useState<string | null>(null);
-  const [pendingGlass, setPendingGlass] = useState<Glass | undefined>();
-  const [pendingTechnique, setPendingTechnique] = useState<Technique | undefined>();
-
-  // Debug: Track modal state changes
-  useEffect(() => {
-    console.log('[DEBUG] Glass Modal State:', isGlassModalOpen);
-  }, [isGlassModalOpen]);
-
-  useEffect(() => {
-    console.log('[DEBUG] Technique Modal State:', isTechniqueModalOpen);
-  }, [isTechniqueModalOpen]);
 
   const handleMaterialSelect = (material: Material, quantity: Quantity) => {
     const existingIndex = selectedMaterials.findIndex(sm => sm.material.id === material.id);
@@ -57,7 +44,6 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
       // Add new material
       if (selectedMaterials.length >= MAX_MATERIALS) {
         setShakeElement('current-display');
-        toast.error('材料は最大4種類までです');
         setTimeout(() => setShakeElement(null), 300);
         return;
       }
@@ -69,14 +55,10 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
     setSelectedMaterials([]);
     setSelectedGlass(undefined);
     setSelectedTechnique(undefined);
-    setPendingGlass(undefined);
-    setPendingTechnique(undefined);
-    toast.success('リセットしました');
   };
 
   const handleServe = () => {
     if (selectedMaterials.length === 0) {
-      toast.error('材料を選択してください');
       return;
     }
 
@@ -88,10 +70,6 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
       }
     });
     setMaterialStocks(newStocks);
-
-    toast.success('🍹 カクテルを作成しました！', {
-      description: 'お客様に提供しました'
-    });
 
     // Navigate to rating screen after a short delay
     setTimeout(() => {
@@ -199,26 +177,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isGlassModalOpen}
         onClose={() => setIsGlassModalOpen(false)}
         title="グラスを選択"
-        onExitComplete={() => {
-          console.log('[DEBUG] Glass modal exit complete, scheduling pending glass update');
-          if (pendingGlass) {
-            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
-            setTimeout(() => {
-              console.log('[DEBUG] Applying pending glass after cleanup delay');
-              setSelectedGlass(pendingGlass);
-              toast.success(`${pendingGlass.name}を選択しました`);
-              setPendingGlass(undefined);
-            }, 100);
-          }
-        }}
       >
         <div className="grid grid-cols-2 gap-3">
           {glasses.map((glass) => (
             <button
               key={glass.id}
               onClick={() => {
-                console.log('[DEBUG] Glass button clicked, setting pending and closing modal');
-                setPendingGlass(glass);
+                setSelectedGlass(glass);
                 setIsGlassModalOpen(false);
               }}
               className={`
@@ -239,26 +204,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isTechniqueModalOpen}
         onClose={() => setIsTechniqueModalOpen(false)}
         title="技法を選択"
-        onExitComplete={() => {
-          console.log('[DEBUG] Technique modal exit complete, scheduling pending technique update');
-          if (pendingTechnique) {
-            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
-            setTimeout(() => {
-              console.log('[DEBUG] Applying pending technique after cleanup delay');
-              setSelectedTechnique(pendingTechnique);
-              toast.success(`${pendingTechnique.name}を選択しました`);
-              setPendingTechnique(undefined);
-            }, 100);
-          }
-        }}
       >
         <div className="space-y-3">
           {techniques.map((technique) => (
             <button
               key={technique.id}
               onClick={() => {
-                console.log('[DEBUG] Technique button clicked, setting pending and closing modal');
-                setPendingTechnique(technique);
+                setSelectedTechnique(technique);
                 setIsTechniqueModalOpen(false);
               }}
               className={`
@@ -277,8 +229,6 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
           ))}
         </div>
       </SelectionModal>
-
-      <Toaster position="top-center" />
     </div>
   );
 }

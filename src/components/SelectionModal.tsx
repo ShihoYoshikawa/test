@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { useEffect } from 'react';
 
 interface SelectionModalProps {
   isOpen: boolean;
@@ -11,18 +10,10 @@ interface SelectionModalProps {
 }
 
 export function SelectionModal({ isOpen, onClose, title, children, onExitComplete }: SelectionModalProps) {
-  // Debug: Track when modal isOpen changes
-  useEffect(() => {
-    console.log(`[DEBUG] SelectionModal (${title}) isOpen:`, isOpen);
-  }, [isOpen, title]);
-
   return (
     <AnimatePresence
       mode="wait"
-      onExitComplete={() => {
-        console.log(`[DEBUG] SelectionModal (${title}) exit animation complete`);
-        onExitComplete?.();
-      }}
+      onExitComplete={onExitComplete}
     >
       {isOpen && (
         <div key={`modal-${title}`}>
@@ -41,9 +32,6 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            onAnimationComplete={(definition) => {
-              console.log(`[DEBUG] SelectionModal (${title}) animation complete:`, definition);
-            }}
             className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh] slide-up"
           >
             <div className="glassmorphism-strong rounded-t-3xl p-6 border-t-2 border-x-2 border-white/20">
