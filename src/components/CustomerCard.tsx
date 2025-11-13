@@ -68,6 +68,7 @@ export function CustomerCard({
             src={imagePath}
             alt="Customer"
             className="w-full h-full object-cover"
+            loading="eager"
           />
         </div>
 
