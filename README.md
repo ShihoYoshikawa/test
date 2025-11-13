@@ -1,53 +1,11 @@
-# Neon Drink Mixer UI 🌃
 
-ネオンチルな雰囲気のカクテルメーカー材料選択UIです。
+  # Material Selection UI
 
-## 特徴
+  This is a code bundle for Material Selection UI. The original project is available at https://www.figma.com/design/TdLv08EyULmyWcL67LwuFz/Material-Selection-UI.
 
-- 🎨 ネオンテーマ（ダーク + グラスモーフィズム）
-- 🍸 材料選択（最大4種類、量調整可能）
-- 📊 リアルタイムFlavor Bar（甘さ/酸味/苦味/強さ）
-- 🥃 グラスと技法の選択
-- ✨ 特別材料の在庫管理
-- 🎭 スムーズなアニメーション
+  ## Running the code
 
-## セットアップ
+  Run `npm i` to install the dependencies.
 
-```bash
-# 依存関係をインストール
-npm install
-
-# 開発サーバーを起動
-npm run dev
-
-# ビルド
-npm run build
-```
-
-## 画面構成
-
-### 1. カレントドリンク構成エリア（上部 20%）
-- 選択された材料のアイコンと量
-- グラス・技法の表示
-- Flavor Bar（4つのバー）
-
-### 2. 材料一覧スクロールエリア（中央 65%）
-- 材料カード（アイコン、名前、タグ、量選択）
-- スクロール可能なリスト
-
-### 3. 操作アクションエリア（下部 15%）
-- 戻る / リセットボタン
-- グラス選択 / 技法選択ボタン
-- 次へボタン
-
-## 技術スタック
-
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-- カスタムCSS（グラスモーフィズム、ネオンエフェクト）
-
-## カスタマイズ
-
-`src/mockData.ts` で材料、グラス、技法のデータをカスタマイズできます。
+  Run `npm run dev` to start the development server.
+  
