@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SpecialIngredient } from '../types';
 import { specialIngredients } from '../data/specialIngredients';
 import { NeonParticles } from '../components/NeonParticles';
+import { ParticleBurst } from '../components/ParticleBurst';
 
 interface RatingScreenProps {
   onConfirm: (selectedIngredient: SpecialIngredient) => void;
@@ -13,6 +14,9 @@ interface RatingScreenProps {
 export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
   const [selectedIngredientId, setSelectedIngredientId] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showBurst, setShowBurst] = useState(false);
+  const [burstPos, setBurstPos] = useState({ x: 0, y: 0 });
+  const previousSelectedId = useRef<string | null>(null);
 
   const handleConfirm = () => {
     if (selectedIngredientId) {
@@ -45,15 +49,33 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
     mood: 'Excellent'
   };
 
+  useEffect(() => {
+    // Trigger particle burst when selection changes
+    if (selectedIngredientId && selectedIngredientId !== previousSelectedId.current) {
+      // Find the selected card element
+      const cardElement = document.getElementById(`ingredient-card-${selectedIngredientId}`);
+      if (cardElement) {
+        const rect = cardElement.getBoundingClientRect();
+        setBurstPos({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        });
+        setShowBurst(true);
+      }
+    }
+    previousSelectedId.current = selectedIngredientId;
+  }, [selectedIngredientId]);
+
   const IngredientCard = ({ ingredient, isVisible = true }: { ingredient: SpecialIngredient; isVisible?: boolean }) => (
     <button
+      id={`ingredient-card-${ingredient.id}`}
       onClick={() => isVisible && setSelectedIngredientId(ingredient.id)}
       className={`
         w-full
         glassmorphism rounded-3xl p-6
         border-2 transition-all duration-300
         ${selectedIngredientId === ingredient.id
-          ? 'border-cyan-400 bg-cyan-400/10 scale-105'
+          ? 'border-cyan-400 bg-cyan-400/10 scale-105 scale-pop'
           : 'border-white/20 hover:border-cyan-400/50 hover:scale-102'
         }
         ${!isVisible ? 'pointer-events-none' : ''}
@@ -87,6 +109,14 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
   );
 
   return (
+    <>
+      {showBurst && (
+        <ParticleBurst
+          x={burstPos.x}
+          y={burstPos.y}
+          onComplete={() => setShowBurst(false)}
+        />
+      )}
     <div className="h-screen bg-cover bg-center relative overflow-y-auto">
       {/* Background Image */}
       <div
@@ -129,7 +159,31 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
               fontFamily: 'Poppins, sans-serif'
             }}
           >
-            EXCELLENT
+            {'EXCELLENT'.split('').map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0, y: -20, scale: 0.5 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.8 + index * 0.08,
+                  type: "spring",
+                  stiffness: 200
+                }}
+                className="inline-block"
+                style={{
+                  display: 'inline-block',
+                  textShadow: `
+                    0 0 30px rgba(76, 199, 255, 0.8),
+                    0 0 60px rgba(76, 199, 255, 0.4),
+                    2px 0 0 rgba(255, 0, 0, ${0.3 - index * 0.03}),
+                    -2px 0 0 rgba(0, 255, 255, ${0.3 - index * 0.03})
+                  `
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </h1>
         </motion.div>
 
@@ -321,5 +375,6 @@ export function RatingScreen({ onConfirm, onBack }: RatingScreenProps) {
 
       </div>
     </div>
+    </>
   );
 }

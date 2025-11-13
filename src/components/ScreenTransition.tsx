@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTransition, TransitionType } from '../contexts/TransitionContext';
 
 interface ScreenTransitionProps {
@@ -9,6 +9,7 @@ interface ScreenTransitionProps {
 
 export function ScreenTransition({ children, screenKey }: ScreenTransitionProps) {
   const { transitionConfig } = useTransition();
+  const [showGlitch, setShowGlitch] = useState(false);
 
   const getTransitionVariants = (type: TransitionType) => {
     const duration = transitionConfig.duration;
@@ -58,6 +59,12 @@ export function ScreenTransition({ children, screenKey }: ScreenTransitionProps)
 
   const variants = getTransitionVariants(transitionConfig.type);
 
+  const handleAnimationStart = () => {
+    // Trigger glitch effect at start of transition
+    setShowGlitch(true);
+    setTimeout(() => setShowGlitch(false), 200);
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -66,7 +73,8 @@ export function ScreenTransition({ children, screenKey }: ScreenTransitionProps)
         animate={variants.animate}
         exit={variants.exit}
         transition={variants.transition}
-        className="absolute inset-0"
+        onAnimationStart={handleAnimationStart}
+        className={`absolute inset-0 ${showGlitch ? 'rgb-split' : ''}`}
       >
         {children}
       </motion.div>
