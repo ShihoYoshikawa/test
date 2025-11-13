@@ -7,9 +7,10 @@ interface SelectionModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  onExitComplete?: () => void;
 }
 
-export function SelectionModal({ isOpen, onClose, title, children }: SelectionModalProps) {
+export function SelectionModal({ isOpen, onClose, title, children, onExitComplete }: SelectionModalProps) {
   // Debug: Track when modal isOpen changes
   useEffect(() => {
     console.log(`[DEBUG] SelectionModal (${title}) isOpen:`, isOpen);
@@ -17,7 +18,10 @@ export function SelectionModal({ isOpen, onClose, title, children }: SelectionMo
 
   return (
     <AnimatePresence
-      onExitComplete={() => console.log(`[DEBUG] SelectionModal (${title}) exit animation complete`)}
+      onExitComplete={() => {
+        console.log(`[DEBUG] SelectionModal (${title}) exit animation complete`);
+        onExitComplete?.();
+      }}
     >
       {isOpen && (
         <>

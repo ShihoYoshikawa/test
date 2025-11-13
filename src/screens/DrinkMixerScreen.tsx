@@ -33,6 +33,8 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   const [isGlassModalOpen, setIsGlassModalOpen] = useState(false);
   const [isTechniqueModalOpen, setIsTechniqueModalOpen] = useState(false);
   const [shakeElement, setShakeElement] = useState<string | null>(null);
+  const [pendingGlass, setPendingGlass] = useState<Glass | undefined>();
+  const [pendingTechnique, setPendingTechnique] = useState<Technique | undefined>();
 
   // Debug: Track modal state changes
   useEffect(() => {
@@ -67,6 +69,8 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
     setSelectedMaterials([]);
     setSelectedGlass(undefined);
     setSelectedTechnique(undefined);
+    setPendingGlass(undefined);
+    setPendingTechnique(undefined);
     toast.success('リセットしました');
   };
 
@@ -195,22 +199,23 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isGlassModalOpen}
         onClose={() => setIsGlassModalOpen(false)}
         title="グラスを選択"
+        onExitComplete={() => {
+          console.log('[DEBUG] Glass modal exit complete, applying pending glass');
+          if (pendingGlass) {
+            setSelectedGlass(pendingGlass);
+            toast.success(`${pendingGlass.name}を選択しました`);
+            setPendingGlass(undefined);
+          }
+        }}
       >
         <div className="grid grid-cols-2 gap-3">
           {glasses.map((glass) => (
             <button
               key={glass.id}
               onClick={() => {
-                console.log('[DEBUG] Glass button clicked, closing modal');
-                // Close modal first to start exit animation
+                console.log('[DEBUG] Glass button clicked, setting pending and closing modal');
+                setPendingGlass(glass);
                 setIsGlassModalOpen(false);
-                console.log('[DEBUG] Glass modal close requested');
-                // Update state after modal starts closing
-                setTimeout(() => {
-                  console.log('[DEBUG] Setting selected glass:', glass.name);
-                  setSelectedGlass(glass);
-                  toast.success(`${glass.name}を選択しました`);
-                }, 50);
               }}
               className={`
                 p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all
@@ -230,22 +235,23 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         isOpen={isTechniqueModalOpen}
         onClose={() => setIsTechniqueModalOpen(false)}
         title="技法を選択"
+        onExitComplete={() => {
+          console.log('[DEBUG] Technique modal exit complete, applying pending technique');
+          if (pendingTechnique) {
+            setSelectedTechnique(pendingTechnique);
+            toast.success(`${pendingTechnique.name}を選択しました`);
+            setPendingTechnique(undefined);
+          }
+        }}
       >
         <div className="space-y-3">
           {techniques.map((technique) => (
             <button
               key={technique.id}
               onClick={() => {
-                console.log('[DEBUG] Technique button clicked, closing modal');
-                // Close modal first to start exit animation
+                console.log('[DEBUG] Technique button clicked, setting pending and closing modal');
+                setPendingTechnique(technique);
                 setIsTechniqueModalOpen(false);
-                console.log('[DEBUG] Technique modal close requested');
-                // Update state after modal starts closing
-                setTimeout(() => {
-                  console.log('[DEBUG] Setting selected technique:', technique.name);
-                  setSelectedTechnique(technique);
-                  toast.success(`${technique.name}を選択しました`);
-                }, 50);
               }}
               className={`
                 w-full p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all text-left
