@@ -49,6 +49,8 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowEntranceAnimation(false);
+      // Auto-select first customer after entrance animation
+      setSelectedCustomerId(customers[0].id);
     }, 600);
     return () => clearTimeout(timer);
   }, []);
@@ -183,6 +185,7 @@ export function CustomerArrivalScreen({ onCustomerSelected, onBack }: CustomerAr
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ duration: 0.3 }}
                   className="cursor-grab active:cursor-grabbing"
+                  onTap={() => setSelectedCustomerId(customers[currentIndex].id)}
                 >
                   <CustomerCard
                     imagePath={customers[currentIndex].imagePath}
