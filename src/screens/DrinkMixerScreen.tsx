@@ -14,9 +14,10 @@ const MAX_MATERIALS = 4;
 
 interface DrinkMixerScreenProps {
   onBack?: () => void;
+  onServeComplete?: () => void;
 }
 
-export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
+export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenProps) {
   const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([]);
   const [materialStocks, setMaterialStocks] = useState<Record<string, number>>(() => {
     const stocks: Record<string, number> = {};
@@ -79,11 +80,12 @@ export function DrinkMixerScreen({ onBack }: DrinkMixerScreenProps) {
       description: 'お客様に提供しました'
     });
 
-    // Reset after serving
+    // Navigate to rating screen after a short delay
     setTimeout(() => {
       setSelectedMaterials([]);
       setSelectedGlass(undefined);
       setSelectedTechnique(undefined);
+      onServeComplete?.();
     }, 1500);
   };
 
