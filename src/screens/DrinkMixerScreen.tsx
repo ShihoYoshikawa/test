@@ -193,8 +193,11 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
               key={glass.id}
               onClick={() => {
                 setSelectedGlass(glass);
-                setIsGlassModalOpen(false);
                 toast.success(`${glass.name}を選択しました`);
+                // Close modal after state update to prevent flash
+                requestAnimationFrame(() => {
+                  setIsGlassModalOpen(false);
+                });
               }}
               className={`
                 p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all
@@ -221,8 +224,11 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
               key={technique.id}
               onClick={() => {
                 setSelectedTechnique(technique);
-                setIsTechniqueModalOpen(false);
                 toast.success(`${technique.name}を選択しました`);
+                // Close modal after state update to prevent flash
+                requestAnimationFrame(() => {
+                  setIsTechniqueModalOpen(false);
+                });
               }}
               className={`
                 w-full p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all text-left
