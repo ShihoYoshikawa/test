@@ -18,25 +18,29 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
 
   return (
     <AnimatePresence
+      mode="wait"
       onExitComplete={() => {
         console.log(`[DEBUG] SelectionModal (${title}) exit animation complete`);
         onExitComplete?.();
       }}
     >
       {isOpen && (
-        <>
+        <div key={`modal-${title}`}>
           <motion.div
+            key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
           />
           <motion.div
+            key="content"
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             onAnimationComplete={(definition) => {
               console.log(`[DEBUG] SelectionModal (${title}) animation complete:`, definition);
             }}
@@ -57,7 +61,7 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
               </div>
             </div>
           </motion.div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );

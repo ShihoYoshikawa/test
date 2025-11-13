@@ -202,13 +202,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onExitComplete={() => {
           console.log('[DEBUG] Glass modal exit complete, scheduling pending glass update');
           if (pendingGlass) {
-            // Delay state update to next frame to ensure AnimatePresence cleanup completes
-            requestAnimationFrame(() => {
-              console.log('[DEBUG] Applying pending glass after frame delay');
+            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
+            setTimeout(() => {
+              console.log('[DEBUG] Applying pending glass after cleanup delay');
               setSelectedGlass(pendingGlass);
               toast.success(`${pendingGlass.name}を選択しました`);
               setPendingGlass(undefined);
-            });
+            }, 100);
           }
         }}
       >
@@ -242,13 +242,13 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onExitComplete={() => {
           console.log('[DEBUG] Technique modal exit complete, scheduling pending technique update');
           if (pendingTechnique) {
-            // Delay state update to next frame to ensure AnimatePresence cleanup completes
-            requestAnimationFrame(() => {
-              console.log('[DEBUG] Applying pending technique after frame delay');
+            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
+            setTimeout(() => {
+              console.log('[DEBUG] Applying pending technique after cleanup delay');
               setSelectedTechnique(pendingTechnique);
               toast.success(`${pendingTechnique.name}を選択しました`);
               setPendingTechnique(undefined);
-            });
+            }, 100);
           }
         }}
       >
