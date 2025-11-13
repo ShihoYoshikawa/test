@@ -200,11 +200,15 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onClose={() => setIsGlassModalOpen(false)}
         title="グラスを選択"
         onExitComplete={() => {
-          console.log('[DEBUG] Glass modal exit complete, applying pending glass');
+          console.log('[DEBUG] Glass modal exit complete, scheduling pending glass update');
           if (pendingGlass) {
-            setSelectedGlass(pendingGlass);
-            toast.success(`${pendingGlass.name}を選択しました`);
-            setPendingGlass(undefined);
+            // Delay state update to next frame to ensure AnimatePresence cleanup completes
+            requestAnimationFrame(() => {
+              console.log('[DEBUG] Applying pending glass after frame delay');
+              setSelectedGlass(pendingGlass);
+              toast.success(`${pendingGlass.name}を選択しました`);
+              setPendingGlass(undefined);
+            });
           }
         }}
       >
@@ -236,11 +240,15 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onClose={() => setIsTechniqueModalOpen(false)}
         title="技法を選択"
         onExitComplete={() => {
-          console.log('[DEBUG] Technique modal exit complete, applying pending technique');
+          console.log('[DEBUG] Technique modal exit complete, scheduling pending technique update');
           if (pendingTechnique) {
-            setSelectedTechnique(pendingTechnique);
-            toast.success(`${pendingTechnique.name}を選択しました`);
-            setPendingTechnique(undefined);
+            // Delay state update to next frame to ensure AnimatePresence cleanup completes
+            requestAnimationFrame(() => {
+              console.log('[DEBUG] Applying pending technique after frame delay');
+              setSelectedTechnique(pendingTechnique);
+              toast.success(`${pendingTechnique.name}を選択しました`);
+              setPendingTechnique(undefined);
+            });
           }
         }}
       >
