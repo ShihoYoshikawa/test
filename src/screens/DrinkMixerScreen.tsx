@@ -85,6 +85,8 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
       setSelectedMaterials([]);
       setSelectedGlass(undefined);
       setSelectedTechnique(undefined);
+      setIsGlassModalOpen(false);
+      setIsTechniqueModalOpen(false);
       onServeComplete?.();
     }, 1500);
   };
