@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { SelectedMaterial, Material, Glass, Technique, Quantity } from '../types';
 import { materials, glasses, techniques } from '../data/materials';
 import { MaterialCard } from '../components/MaterialCard';
@@ -35,6 +35,7 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   const [shakeElement, setShakeElement] = useState<string | null>(null);
   const [pendingGlass, setPendingGlass] = useState<Glass | undefined>();
   const [pendingTechnique, setPendingTechnique] = useState<Technique | undefined>();
+  const [isPending, startTransition] = useTransition();
 
   // Debug: Track modal state changes
   useEffect(() => {
@@ -200,15 +201,15 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onClose={() => setIsGlassModalOpen(false)}
         title="グラスを選択"
         onExitComplete={() => {
-          console.log('[DEBUG] Glass modal exit complete, scheduling pending glass update');
+          console.log('[DEBUG] Glass modal exit complete, using startTransition for pending glass');
           if (pendingGlass) {
-            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
-            setTimeout(() => {
-              console.log('[DEBUG] Applying pending glass after cleanup delay');
+            // Use startTransition to mark state update as low priority
+            startTransition(() => {
+              console.log('[DEBUG] Applying pending glass in transition');
               setSelectedGlass(pendingGlass);
               toast.success(`${pendingGlass.name}を選択しました`);
               setPendingGlass(undefined);
-            }, 100);
+            });
           }
         }}
       >
@@ -240,15 +241,15 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
         onClose={() => setIsTechniqueModalOpen(false)}
         title="技法を選択"
         onExitComplete={() => {
-          console.log('[DEBUG] Technique modal exit complete, scheduling pending technique update');
+          console.log('[DEBUG] Technique modal exit complete, using startTransition for pending technique');
           if (pendingTechnique) {
-            // Wait for AnimatePresence cleanup to fully complete (exit animation is 300ms)
-            setTimeout(() => {
-              console.log('[DEBUG] Applying pending technique after cleanup delay');
+            // Use startTransition to mark state update as low priority
+            startTransition(() => {
+              console.log('[DEBUG] Applying pending technique in transition');
               setSelectedTechnique(pendingTechnique);
               toast.success(`${pendingTechnique.name}を選択しました`);
               setPendingTechnique(undefined);
-            }, 100);
+            });
           }
         }}
       >
