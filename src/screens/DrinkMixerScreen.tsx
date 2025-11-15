@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SelectedMaterial, Material, Glass, Technique, Quantity } from '../types';
 import { materials, glasses, techniques } from '../data/materials';
 import { MaterialCard } from '../components/MaterialCard';
@@ -34,6 +34,74 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
   // Pending selections to apply after modal closes
   const [pendingGlass, setPendingGlass] = useState<Glass | undefined>();
   const [pendingTechnique, setPendingTechnique] = useState<Technique | undefined>();
+  // Prevent reopening during close animation to avoid ghost-click reopens
+  const glassModalClosingRef = useRef(false);
+  const techniqueModalClosingRef = useRef(false);
+  const glassUnlockTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const techniqueUnlockTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (glassUnlockTimeout.current) {
+        clearTimeout(glassUnlockTimeout.current);
+      }
+      if (techniqueUnlockTimeout.current) {
+        clearTimeout(techniqueUnlockTimeout.current);
+      }
+    };
+  }, []);
+
+  const releaseGlassModalLock = () => {
+    if (glassUnlockTimeout.current) {
+      clearTimeout(glassUnlockTimeout.current);
+    }
+    glassUnlockTimeout.current = setTimeout(() => {
+      glassModalClosingRef.current = false;
+      glassUnlockTimeout.current = null;
+    }, 250);
+  };
+
+  const releaseTechniqueModalLock = () => {
+    if (techniqueUnlockTimeout.current) {
+      clearTimeout(techniqueUnlockTimeout.current);
+    }
+    techniqueUnlockTimeout.current = setTimeout(() => {
+      techniqueModalClosingRef.current = false;
+      techniqueUnlockTimeout.current = null;
+    }, 250);
+  };
+
+  const closeGlassModal = () => {
+    setIsGlassModalOpen((prev) => {
+      if (prev) {
+        glassModalClosingRef.current = true;
+      }
+      return false;
+    });
+  };
+
+  const openGlassModal = () => {
+    if (glassModalClosingRef.current) {
+      return;
+    }
+    setIsGlassModalOpen(true);
+  };
+
+  const closeTechniqueModal = () => {
+    setIsTechniqueModalOpen((prev) => {
+      if (prev) {
+        techniqueModalClosingRef.current = true;
+      }
+      return false;
+    });
+  };
+
+  const openTechniqueModal = () => {
+    if (techniqueModalClosingRef.current) {
+      return;
+    }
+    setIsTechniqueModalOpen(true);
+  };
 
   const handleMaterialSelect = (material: Material, quantity: Quantity) => {
     const existingIndex = selectedMaterials.findIndex(sm => sm.material.id === material.id);
@@ -120,8 +188,8 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
             selectedMaterials={selectedMaterials}
             selectedGlass={selectedGlass}
             selectedTechnique={selectedTechnique}
-            onGlassClick={() => setIsGlassModalOpen(true)}
-            onTechniqueClick={() => setIsTechniqueModalOpen(true)}
+            onGlassClick={openGlassModal}
+            onTechniqueClick={openTechniqueModal}
           />
         </div>
 
@@ -180,9 +248,10 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
       {/* Glass Selection Modal */}
       <SelectionModal
         isOpen={isGlassModalOpen}
-        onClose={() => setIsGlassModalOpen(false)}
+        onClose={closeGlassModal}
         title="グラスを選択"
         onExitComplete={() => {
+          releaseGlassModalLock();
           // Apply pending selection after modal closes
           if (pendingGlass) {
             setSelectedGlass(pendingGlass);
@@ -197,7 +266,7 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
               onClick={() => {
                 // Store selection in pending state and close modal
                 setPendingGlass(glass);
-                setIsGlassModalOpen(false);
+                closeGlassModal();
               }}
               className={`
                 p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all
@@ -215,9 +284,10 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
       {/* Technique Selection Modal */}
       <SelectionModal
         isOpen={isTechniqueModalOpen}
-        onClose={() => setIsTechniqueModalOpen(false)}
+        onClose={closeTechniqueModal}
         title="技法を選択"
         onExitComplete={() => {
+          releaseTechniqueModalLock();
           // Apply pending selection after modal closes
           if (pendingTechnique) {
             setSelectedTechnique(pendingTechnique);
@@ -232,7 +302,7 @@ export function DrinkMixerScreen({ onBack, onServeComplete }: DrinkMixerScreenPr
               onClick={() => {
                 // Store selection in pending state and close modal
                 setPendingTechnique(technique);
-                setIsTechniqueModalOpen(false);
+                closeTechniqueModal();
               }}
               className={`
                 w-full p-4 rounded-xl glassmorphism hover:bg-white/10 transition-all text-left

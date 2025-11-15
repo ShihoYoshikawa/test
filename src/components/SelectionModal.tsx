@@ -51,7 +51,7 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh] slide-up"
+            className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh]"
           >
             <div className="glassmorphism-strong rounded-t-3xl p-6 border-t-2 border-x-2 border-white/20">
               <div className="flex items-center justify-between mb-6">
