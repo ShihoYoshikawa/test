@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
 interface SelectionModalProps {
   isOpen: boolean;
@@ -10,10 +11,28 @@ interface SelectionModalProps {
 }
 
 export function SelectionModal({ isOpen, onClose, title, children, onExitComplete }: SelectionModalProps) {
+  // Snapshot of children to prevent re-renders during exit animation
+  const childrenSnapshot = useRef<React.ReactNode>(null);
+  const isFirstOpen = useRef(true);
+
+  // Capture children when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      childrenSnapshot.current = children;
+      isFirstOpen.current = false;
+    }
+  }, [isOpen, children]);
+
+  const handleExitComplete = () => {
+    // Clear snapshot after animation completes
+    childrenSnapshot.current = null;
+    onExitComplete?.();
+  };
+
   return (
     <AnimatePresence
       mode="wait"
-      onExitComplete={onExitComplete}
+      onExitComplete={handleExitComplete}
     >
       {isOpen && (
         <div key={`modal-${title}`}>
@@ -32,7 +51,7 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh] slide-up"
+            className="fixed bottom-0 left-0 right-0 z-50 max-h-[80vh]"
           >
             <div className="glassmorphism-strong rounded-t-3xl p-6 border-t-2 border-x-2 border-white/20">
               <div className="flex items-center justify-between mb-6">
@@ -45,7 +64,7 @@ export function SelectionModal({ isOpen, onClose, title, children, onExitComplet
                 </button>
               </div>
               <div className="overflow-y-auto max-h-[60vh]">
-                {children}
+                {childrenSnapshot.current || children}
               </div>
             </div>
           </motion.div>

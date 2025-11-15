@@ -8,7 +8,8 @@
       "Bash(nul)",
       "Bash(git checkout:*)",
       "Bash(git add:*)",
-      "Bash(.gitignore)"
+      "Bash(.gitignore)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: Fix ghost-click reopens during modal close animation\n\n- Add refs and lock mechanism to prevent reopening during close animation\n- Implement closeGlassModal, openGlassModal, closeTechniqueModal, openTechniqueModal handlers with ghost-click guards\n- Add 250ms unlock timeout after modal exit complete callback\n- Remove unused ''slide-up'' class from SelectionModal\n- Ensure cleanup of timeouts in useEffect cleanup function\n\nThis prevents unintended modal reopens from clicks that occur during\nthe modal close animation (ghost-clicks).\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
